@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPLOAD DE RESUMO</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .image-container img {
+            max-width: 300px;
+            max-height: 300px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <h2>ANEXAR RESUMO</h2>
+
+    <!-- Formulário para upload de imagem -->
+    <input type="file" id="imageInput" accept="image/*">
+    <button id="uploadButton">Upload</button>
+
+    <!-- Área de visualização de imagens -->
+    <h3>Imagens enviadas:</h3>
+    <div class="image-container" id="imageContainer"></div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const imageContainer = document.getElementById('imageContainer');
+
+        // Função para exibir imagens armazenadas no LocalStorage
+        function displayStoredImages() {
+            const storedImages = JSON.parse(localStorage.getItem('images')) || [];
+            imageContainer.innerHTML = '';  // Limpa a área de visualização
+
+            // Para cada imagem armazenada, criar um elemento img
+            storedImages.forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                imageContainer.appendChild(img);
+            });
+        }
+
+        
+        function uploadImage() {
+            const file = imageInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imgSrc = e.target.result;
+
+                    // Armazena a imagem no LocalStorage
+                    let storedImages = JSON.parse(localStorage.getItem('images')) || [];
+                    storedImages.push(imgSrc);
+                    localStorage.setItem('images', JSON.stringify(storedImages));
+
+                    // Atualiza a área de visualização
+                    displayStoredImages();
+                };
+                reader.readAsDataURL(file);  // Converte a imagem em Base64
+            }
+        }
+
+        // Exibir imagens já armazenadas ao carregar a página
+        window.onload = function () {
+            displayStoredImages();
+        };
+
+        // Evento de upload ao clicar no botão
+        uploadButton.addEventListener('click', uploadImage);
+    </script>
+</body>
+</html>
